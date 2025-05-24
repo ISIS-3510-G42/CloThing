@@ -12,11 +12,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.draw.clip
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.moviles.clothingapp.view.HomeView.BottomNavigationBar
 import com.moviles.clothingapp.viewmodel.PostViewModel
 
 @Composable
 fun DetailedPostScreen(
+    navController: NavController,
     productId: Int,
     viewModel: PostViewModel = viewModel(),
     onBack: () -> Unit,
@@ -29,69 +32,90 @@ fun DetailedPostScreen(
         viewModel.fetchPostById(productId)
     }
 
-    when {
-        isLoading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        }
-        product != null -> {
-            val bucketId = "67ddf3860035ee6bd725"
-            val projectId = "moviles"
-            val imageUrl = if (product!!.image.startsWith("http")) {
-                product!!.image
-            } else {
-                "https://cloud.appwrite.io/v1/storage/buckets/$bucketId/files/${product!!.image}/view?project=$projectId"
-            }
+    Scaffold(
+        bottomBar = { BottomNavigationBar(navController = navController) }
+    ) { padding ->
 
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-            ) {
-                AsyncImage(
-                    model = imageUrl,
-                    contentDescription = product!!.name,
+        when {
+            isLoading -> {
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(250.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(text = product!!.name, fontSize = 22.sp, fontWeight = FontWeight.Bold)
-                Text(text = "Brand: ${product!!.brand}", fontSize = 16.sp, color = Color.Gray)
-                Text(text = "Price: $${product!!.price}", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Green)
-                Text(text = "Category: ${product!!.category}")
-                Text(text = "Group: ${product!!.group}")
-                Text(text = "Size: ${product!!.size}")
-                Text(text = "Color: ${product!!.color}")
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .fillMaxSize()
+                        .padding(padding),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Button(
-                        onClick = onBack,
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFA0522D))
+                    CircularProgressIndicator()
+                }
+            }
+            product != null -> {
+                val bucketId = "67ddf3860035ee6bd725"
+                val projectId = "moviles"
+                val imageUrl = if (product!!.image.startsWith("http")) {
+                    product!!.image
+                } else {
+                    "https://cloud.appwrite.io/v1/storage/buckets/$bucketId/files/${product!!.image}/view?project=$projectId"
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding)
+                        .padding(16.dp)
+                ) {
+                    AsyncImage(
+                        model = imageUrl,
+                        contentDescription = product!!.name,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(250.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(text = product!!.name, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                    Text(text = "Brand: ${product!!.brand}", fontSize = 16.sp, color = Color.Gray)
+                    Text(
+                        text = "Price: $${product!!.price}",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Green
+                    )
+                    Text(text = "Category: ${product!!.category}")
+                    Text(text = "Group: ${product!!.group}")
+                    Text(text = "Size: ${product!!.size}")
+                    Text(text = "Color: ${product!!.color}")
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(text = "Back", color = Color.White)
-                    }
-                    Button(
-                        onClick = onAddToCart,
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E7D32))
-                    ) {
-                        Text(text = "Add to Cart", color = Color.White)
+                        Button(
+                            onClick = onBack,
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFA0522D))
+                        ) {
+                            Text(text = "Back", color = Color.White)
+                        }
+                        Button(
+                            onClick = onAddToCart,
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E7D32))
+                        ) {
+                            Text(text = "Add to Cart", color = Color.White)
+                        }
                     }
                 }
             }
-        }
-        else -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = "Error loading product", color = Color.Red)
+            else -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "Error loading product", color = Color.Red)
+                }
             }
         }
     }
 }
+

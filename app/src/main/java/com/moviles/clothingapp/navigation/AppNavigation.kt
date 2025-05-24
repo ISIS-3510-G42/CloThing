@@ -18,6 +18,7 @@ import com.moviles.clothingapp.view.Login.CreateAccountScreen
 import com.moviles.clothingapp.view.Login.LoginScreen
 import com.moviles.clothingapp.view.Login.ResetPasswordScreen
 import com.moviles.clothingapp.view.Map.MapScreen
+import com.moviles.clothingapp.view.PostsCreated.PostsCreatedScreen
 import com.moviles.clothingapp.viewmodel.HomeViewModel
 import com.moviles.clothingapp.viewmodel.LoginViewModel
 import com.moviles.clothingapp.viewmodel.PostViewModel
@@ -96,6 +97,7 @@ fun AppNavigation(navController: NavHostController,
             val postId = backStackEntry.arguments?.getInt("postId") ?: 0
             val postViewModel: PostViewModel = viewModel()
             DetailedPostScreen(
+                navController = navController,
                 productId = postId,
                 viewModel = postViewModel,
                 onBack = { navController.popBackStack() },
@@ -106,6 +108,10 @@ fun AppNavigation(navController: NavHostController,
 
         composable("camera") {
             CameraScreen(navController)
+        }
+
+        composable("postCreated") {
+            PostsCreatedScreen(navController = navController)
         }
 
         composable("createPost/{encodedUri}") { backStackEntry ->
