@@ -31,6 +31,7 @@ import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
 import com.moviles.clothingapp.view.HomeView.BottomNavigationBar
 import com.moviles.clothingapp.view.HomeView.SearchBar
+import com.moviles.clothingapp.view.components.ConnectionBanner
 import com.moviles.clothingapp.viewmodel.PostViewModel
 
 
@@ -43,7 +44,7 @@ import com.moviles.clothingapp.viewmodel.PostViewModel
  */
 
 @Composable
-fun DiscoverScreen(navController: NavController, viewModel: PostViewModel, query: String) {
+fun DiscoverScreen(navController: NavController, viewModel: PostViewModel, query: String, isConnected: Boolean) {
     val posts by viewModel.posts.collectAsState()
     var searchQuery by remember { mutableStateOf(query) }
     val trace: Trace = FirebasePerformance.getInstance().newTrace("DiscoverScreen_trace")
@@ -68,20 +69,22 @@ fun DiscoverScreen(navController: NavController, viewModel: PostViewModel, query
 
     Scaffold(
         topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Descubrir",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(1f)
-                )
-                IconButton(onClick = { showFilterDialog = true }) {
-                    Icon(Icons.Rounded.FilterAlt, contentDescription = "Filter")
+            Column {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Descubrir",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.weight(1f)
+                    )
+                    IconButton(onClick = { showFilterDialog = true }) {
+                        Icon(Icons.Rounded.FilterAlt, contentDescription = "Filter")
+                    }
                 }
             }
         },
@@ -94,6 +97,7 @@ fun DiscoverScreen(navController: NavController, viewModel: PostViewModel, query
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+            ConnectionBanner(isConnected)
             SearchBar(
                 searchText = searchQuery,
                 onSearchTextChange = { searchQuery = it },

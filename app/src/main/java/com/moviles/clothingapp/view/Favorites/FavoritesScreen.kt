@@ -16,10 +16,12 @@ import com.moviles.clothingapp.view.Discover.PostItem
 import com.moviles.clothingapp.view.HomeView.BottomNavigationBar
 import com.moviles.clothingapp.viewmodel.FavoritesViewModel
 import androidx.compose.runtime.livedata.observeAsState
+import com.moviles.clothingapp.view.components.ConnectionBanner
 
 @Composable
 fun FavoritesScreen(
     navController: NavHostController,
+    isConnected: Boolean,
     favoritesViewModel: FavoritesViewModel,
     allProducts: List<PostData>
 ) {
@@ -52,14 +54,20 @@ fun FavoritesScreen(
             BottomNavigationBar(navController)
         }
     ) { paddingValues ->
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            items(items = favoriteProducts) { post ->
-                PostItem(post) {
-                    navController.navigate("detailedPost/${post.id}")
+            ConnectionBanner(isConnected = isConnected)
+
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(items = favoriteProducts) { post ->
+                    PostItem(post) {
+                        navController.navigate("detailedPost/${post.id}")
+                    }
                 }
             }
         }

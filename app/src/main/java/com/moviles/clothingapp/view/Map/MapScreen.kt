@@ -36,10 +36,11 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberMarkerState
 import com.moviles.clothingapp.view.HomeView.BottomNavigationBar
+import com.moviles.clothingapp.view.components.ConnectionBanner
 import com.moviles.clothingapp.viewmodel.MapLogicViewModel
 
 @Composable
-fun MapScreen(navController: NavController, viewModel: MapLogicViewModel = viewModel()) {
+fun MapScreen(navController: NavController, viewModel: MapLogicViewModel = viewModel(), isConnected:Boolean) {
     val userLocation by viewModel.userLocation.observeAsState()
     val shopLocations by viewModel.shopLocations.observeAsState(emptyList())
 
@@ -57,6 +58,8 @@ fun MapScreen(navController: NavController, viewModel: MapLogicViewModel = viewM
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(16.dp)
             )
+            ConnectionBanner(isConnected = isConnected)
+
 
             Box(
                 modifier = Modifier

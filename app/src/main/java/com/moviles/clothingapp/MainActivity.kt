@@ -19,12 +19,16 @@ import android.Manifest
 import android.os.Build
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.collectAsState
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import com.google.firebase.perf.FirebasePerformance
+import com.moviles.clothingapp.utils.ConnectivityObserver
+import androidx.compose.runtime.getValue
 
 
 class MainActivity : ComponentActivity() {
+    private lateinit var connectivityObserver: ConnectivityObserver
     private lateinit var auth: FirebaseAuth
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var resetPasswordViewModel: ResetPasswordViewModel
@@ -41,6 +45,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        connectivityObserver = ConnectivityObserver(applicationContext)
         auth = Firebase.auth
         loginViewModel = LoginViewModel(auth)
         resetPasswordViewModel = ResetPasswordViewModel(auth)
@@ -61,7 +67,14 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val navController = rememberNavController()
-            AppNavigation(navController, loginViewModel, resetPasswordViewModel, weatherViewModel)
+            val isConnected by connectivityObserver.isConnected.collectAsState(initial = false)
+            AppNavigation(
+                navController = navController,
+                isConnected = isConnected,
+                loginViewModel = loginViewModel,
+                resetPasswordViewModel = resetPasswordViewModel,
+                weatherViewModel = weatherViewModel
+            )
         }
     }
 
