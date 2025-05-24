@@ -1,6 +1,10 @@
 package com.moviles.clothingapp.navigation
 
 import android.net.Uri
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -27,7 +31,11 @@ import com.moviles.clothingapp.viewmodel.ResetPasswordViewModel
 import com.moviles.clothingapp.viewmodel.WeatherViewModel
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.moviles.clothingapp.view.favorites.FavoritesScreen
+import androidx.compose.foundation.layout.Box
 
 
 /* Navigation component called to change between pages
@@ -37,10 +45,21 @@ import com.moviles.clothingapp.view.favorites.FavoritesScreen
 * */
 @Composable
 fun AppNavigation(navController: NavHostController,
+                  isConnected: Boolean,
                   loginViewModel: LoginViewModel,
                   resetPasswordViewModel: ResetPasswordViewModel,
                   weatherViewModel: WeatherViewModel
 ) {
+
+    if (!isConnected) {
+        Box(modifier = Modifier.fillMaxWidth().background(Color.Red)) {
+            Text(
+                text = "No hay conexión a internet",
+                color = Color.White,
+                modifier = Modifier.padding(8.dp)
+            )
+        }
+    }
 
     /* Start navigation in login page. Route: login */
     NavHost(navController = navController, startDestination = "login") {
@@ -70,7 +89,7 @@ fun AppNavigation(navController: NavHostController,
         /* Home/Main page. Route: home */
         composable("home") {
             val homeViewModel: HomeViewModel = viewModel()
-            MainScreen(navController, homeViewModel, weatherViewModel)
+            MainScreen(navController, homeViewModel, weatherViewModel, isConnected)
 
         }
 
@@ -91,7 +110,7 @@ fun AppNavigation(navController: NavHostController,
         composable("discover/{query}") { backStackEntry ->
             val query = backStackEntry.arguments?.getString("query") ?: ""
             val postViewModel: PostViewModel = viewModel()
-            DiscoverScreen(navController, postViewModel, query)
+            DiscoverScreen(navController, postViewModel, query, isConnected)
         }
 
         composable(
@@ -105,7 +124,9 @@ fun AppNavigation(navController: NavHostController,
                 productId = postId,
                 viewModel = postViewModel,
                 onBack = { navController.popBackStack() },
-                onAddToCart = { /* lógica para agregar al carrito */ }
+                onAddToCart = { /* lógica para agregar al carrito */ },
+                isConnected = isConnected
+
             )
         }
 
@@ -126,7 +147,7 @@ fun AppNavigation(navController: NavHostController,
 
 
         composable("map/") {
-            MapScreen(navController)
+            MapScreen(navController, isConnected = isConnected)
         }
 
         composable("favorites") {
@@ -134,7 +155,7 @@ fun AppNavigation(navController: NavHostController,
             val postViewModel: PostViewModel = viewModel()
             val allProducts by postViewModel.posts.collectAsState()
 
-            FavoritesScreen(navController, favoritesViewModel, allProducts)
+            FavoritesScreen(navController,isConnected, favoritesViewModel, allProducts)
         }
 
 

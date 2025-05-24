@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.runtime.livedata.observeAsState
+import com.moviles.clothingapp.view.components.ConnectionBanner
 
 @Composable
 fun DetailedPostScreen(
@@ -28,7 +29,8 @@ fun DetailedPostScreen(
     productId: Int,
     viewModel: PostViewModel = viewModel(),
     onBack: () -> Unit,
-    onAddToCart: () -> Unit
+    onAddToCart: () -> Unit,
+    isConnected: Boolean
 ) {
     val product by viewModel.post.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -71,6 +73,8 @@ fun DetailedPostScreen(
                         .padding(padding)
                         .padding(16.dp)
                 ) {
+                    ConnectionBanner(isConnected = isConnected)
+                    Spacer(modifier = Modifier.height(8.dp))
                     AsyncImage(
                         model = imageUrl,
                         contentDescription = product!!.name,
