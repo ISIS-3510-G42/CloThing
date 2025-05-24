@@ -17,12 +17,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.moviles.clothingapp.view.HomeView.BottomNavigationBar
+import androidx.compose.runtime.remember
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostsCreatedScreen(navController: NavController,viewModel: PostsCreatedViewModel = viewModel()) {
-    val postList by viewModel.allPosts
+    val postList by remember {viewModel.allPosts}
 
     Scaffold(
         topBar = {
@@ -33,7 +35,7 @@ fun PostsCreatedScreen(navController: NavController,viewModel: PostsCreatedViewM
         }
     ) { padding ->
         LazyColumn(modifier = Modifier.padding(padding)) {
-            items(postList) { post ->
+            items(postList, key = {it.id}) { post ->
                 PostItem(post = post)
             }
         }

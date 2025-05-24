@@ -12,7 +12,6 @@ interface PostDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPost(post: PostEntity)
 
-
     @Query("SELECT * FROM posts")
     fun getAllPosts(): Flow<List<PostEntity>>
 
