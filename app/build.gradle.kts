@@ -6,7 +6,9 @@ plugins {
     id("com.google.firebase.firebase-perf")
     id("com.google.gms.google-services")
     alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
+    id("com.google.devtools.ksp")
 }
+
 
 
 android {
@@ -49,6 +51,7 @@ android {
 }
 
 dependencies {
+    val room_version = "2.7.1"
 
     //Retrofit and moshi for API calls and parsing
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
@@ -109,6 +112,13 @@ dependencies {
     implementation(libs.play.services.maps)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
+
+
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
+
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
