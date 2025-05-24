@@ -3,6 +3,7 @@ package com.moviles.clothingapp.view.HomeView
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
@@ -28,7 +29,8 @@ import com.moviles.clothingapp.viewmodel.WeatherViewModel
 fun MainScreen(
     navController: NavController,
     homeViewModel: HomeViewModel = viewModel(),
-    weatherViewModel: WeatherViewModel = viewModel()
+    weatherViewModel: WeatherViewModel = viewModel(),
+    isConnected: Boolean
 ) {
     val banner = weatherViewModel.bannerType.observeAsState()
     val searchText = remember { mutableStateOf("") } // Store search text
@@ -49,6 +51,22 @@ fun MainScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            item{
+                if (!isConnected) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(androidx.compose.ui.graphics.Color.Red)
+                            .padding(vertical = 12.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        androidx.compose.material3.Text(
+                            text = "Sin conexión a internet",
+                            color = androidx.compose.ui.graphics.Color.White
+                        )
+                    }
+                }
+            }
             item {
                 Image(
                     painter = painterResource(id = R.drawable.logo),
