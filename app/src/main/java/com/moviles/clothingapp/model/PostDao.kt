@@ -16,4 +16,7 @@ interface PostDao {
     @Query("SELECT * FROM posts")
     fun getAllPosts(): Flow<List<PostEntity>>
 
+    @Query("SELECT * FROM posts")
+    suspend fun getAllPostsList(): List<PostEntity>
+
 }
