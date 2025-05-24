@@ -13,7 +13,6 @@ import com.moviles.clothingapp.view.CreatePost.CreatePostScreen
 import com.moviles.clothingapp.view.DetailedPost.DetailedPostScreen
 import com.moviles.clothingapp.view.Discover.DiscoverScreen
 import com.moviles.clothingapp.view.Discover.WeatherCategoryScreen
-import com.moviles.clothingapp.view.Favorites.FavoritesScreen
 import com.moviles.clothingapp.view.HomeView.MainScreen
 import com.moviles.clothingapp.view.Login.CreateAccountScreen
 import com.moviles.clothingapp.view.Login.LoginScreen
@@ -28,8 +27,7 @@ import com.moviles.clothingapp.viewmodel.ResetPasswordViewModel
 import com.moviles.clothingapp.viewmodel.WeatherViewModel
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-
-
+import com.moviles.clothingapp.view.favorites.FavoritesScreen
 
 
 /* Navigation component called to change between pages
