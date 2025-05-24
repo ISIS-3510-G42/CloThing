@@ -18,4 +18,8 @@ class LocalPostRepository(application: Context) {
         postDao.insertPost(post)
     }
 
+    suspend fun getAllPostList(): List<PostEntity>{
+        return postDao.getAllPostsList()
+    }
+
 }
