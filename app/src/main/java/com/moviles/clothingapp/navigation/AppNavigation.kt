@@ -13,16 +13,22 @@ import com.moviles.clothingapp.view.CreatePost.CreatePostScreen
 import com.moviles.clothingapp.view.DetailedPost.DetailedPostScreen
 import com.moviles.clothingapp.view.Discover.DiscoverScreen
 import com.moviles.clothingapp.view.Discover.WeatherCategoryScreen
+import com.moviles.clothingapp.view.Favorites.FavoritesScreen
 import com.moviles.clothingapp.view.HomeView.MainScreen
 import com.moviles.clothingapp.view.Login.CreateAccountScreen
 import com.moviles.clothingapp.view.Login.LoginScreen
 import com.moviles.clothingapp.view.Login.ResetPasswordScreen
 import com.moviles.clothingapp.view.Map.MapScreen
+import com.moviles.clothingapp.viewmodel.FavoritesViewModel
 import com.moviles.clothingapp.viewmodel.HomeViewModel
 import com.moviles.clothingapp.viewmodel.LoginViewModel
 import com.moviles.clothingapp.viewmodel.PostViewModel
 import com.moviles.clothingapp.viewmodel.ResetPasswordViewModel
 import com.moviles.clothingapp.viewmodel.WeatherViewModel
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+
+
 
 
 /* Navigation component called to change between pages
@@ -118,6 +124,15 @@ fun AppNavigation(navController: NavHostController,
         composable("map/") {
             MapScreen(navController)
         }
+
+        composable("favorites") {
+            val favoritesViewModel: FavoritesViewModel = viewModel()
+            val postViewModel: PostViewModel = viewModel()
+            val allProducts by postViewModel.posts.collectAsState()
+
+            FavoritesScreen(navController, favoritesViewModel, allProducts)
+        }
+
 
 
 
