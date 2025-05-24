@@ -42,4 +42,5 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
     fun isFavorite(productId: String): Boolean {
         return repo.isFavorite(productId)
     }
+
 }
