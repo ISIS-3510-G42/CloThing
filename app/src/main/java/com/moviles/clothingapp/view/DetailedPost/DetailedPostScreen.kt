@@ -14,8 +14,13 @@ import androidx.compose.ui.draw.clip
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.moviles.clothingapp.viewmodel.FavoritesViewModel
 import com.moviles.clothingapp.view.HomeView.BottomNavigationBar
 import com.moviles.clothingapp.viewmodel.PostViewModel
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.runtime.livedata.observeAsState
 
 @Composable
 fun DetailedPostScreen(
@@ -27,6 +32,8 @@ fun DetailedPostScreen(
 ) {
     val product by viewModel.post.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val favoritesViewModel: FavoritesViewModel = viewModel()
+    val favoriteIds by favoritesViewModel.favoriteIds.observeAsState(emptySet())
 
     LaunchedEffect(productId) {
         viewModel.fetchPostById(productId)
@@ -35,7 +42,6 @@ fun DetailedPostScreen(
     Scaffold(
         bottomBar = { BottomNavigationBar(navController = navController) }
     ) { padding ->
-
         when {
             isLoading -> {
                 Box(
@@ -47,6 +53,7 @@ fun DetailedPostScreen(
                     CircularProgressIndicator()
                 }
             }
+
             product != null -> {
                 val bucketId = "67ddf3860035ee6bd725"
                 val projectId = "moviles"
@@ -55,6 +62,8 @@ fun DetailedPostScreen(
                 } else {
                     "https://cloud.appwrite.io/v1/storage/buckets/$bucketId/files/${product!!.image}/view?project=$projectId"
                 }
+
+                val isFavorite = favoriteIds.contains(productId.toString())
 
                 Column(
                     modifier = Modifier
@@ -96,6 +105,7 @@ fun DetailedPostScreen(
                         ) {
                             Text(text = "Back", color = Color.White)
                         }
+
                         Button(
                             onClick = onAddToCart,
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E7D32))
@@ -103,8 +113,32 @@ fun DetailedPostScreen(
                             Text(text = "Add to Cart", color = Color.White)
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(onClick = {
+                            favoritesViewModel.toggleFavorite(productId.toString())
+                        }) {
+                            Icon(
+                                imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                                contentDescription = "Favorito",
+                                tint = if (isFavorite) Color.Red else Color.Gray
+                            )
+                        }
+
+                        Text(
+                            text = if (isFavorite) "Este producto está en tus favoritos" else "No está en favoritos",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = if (isFavorite) Color.Red else Color.Gray
+                        )
+                    }
                 }
             }
+
             else -> {
                 Box(
                     modifier = Modifier
@@ -118,4 +152,5 @@ fun DetailedPostScreen(
         }
     }
 }
+
 
