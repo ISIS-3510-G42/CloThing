@@ -61,15 +61,7 @@ fun FavoritesScreen(
         ) {
             ConnectionBanner(isConnected = isConnected)
 
-            LazyColumn(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(items = favoriteProducts) { post ->
-                    PostItem(post) {
-                        navController.navigate("detailedPost/${post.id}")
-                    }
-                }
-            }
+
         }
     }
 }
