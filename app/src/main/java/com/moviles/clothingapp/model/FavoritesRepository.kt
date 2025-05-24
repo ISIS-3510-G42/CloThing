@@ -14,6 +14,7 @@ class FavoritesRepository {
             return getFavoriteIds().contains(productId)
         }
 
+
         fun toggleFavorite(productId: String) {
             val current = getFavoriteIds().toMutableSet()
             if (current.contains(productId)) {
@@ -21,6 +22,7 @@ class FavoritesRepository {
             } else {
                 current.add(productId)
             }
+
             prefs.edit().putStringSet("favorites", current).apply()
         }
     }
