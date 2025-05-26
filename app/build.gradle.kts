@@ -51,6 +51,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.room.runtime.android)
     val room_version = "2.7.1"
 
     //Retrofit and moshi for API calls and parsing
@@ -112,11 +113,9 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
 
-
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
-
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

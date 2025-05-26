@@ -17,12 +17,12 @@ import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
 import com.moviles.clothingapp.R
 import com.moviles.clothingapp.viewmodel.LoginViewModel
-import com.moviles.clothingapp.viewmodel.WeatherViewModel
 import kotlinx.coroutines.delay
 
 @Composable
-fun LoginScreen(loginViewModel: LoginViewModel, onNavigateToHome: () -> Unit,
-                navController: NavHostController, weatherViewModel: WeatherViewModel) {
+fun LoginScreen(loginViewModel: LoginViewModel,
+                onNavigateToHome: () -> Unit,
+                navController: NavHostController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -31,11 +31,7 @@ fun LoginScreen(loginViewModel: LoginViewModel, onNavigateToHome: () -> Unit,
 
     /* Launch process for dynamic PromoBanner - based on weather & measures loading time*/
     val trace: Trace = remember { FirebasePerformance.getInstance().newTrace("LoginScreen_Loading") }
-    LaunchedEffect(Unit){
-        trace.start()
-        weatherViewModel.fetchWeatherData()
-        trace.stop()
-    }
+
 
     Column(
         modifier = Modifier
