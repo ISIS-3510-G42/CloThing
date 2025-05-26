@@ -13,8 +13,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.moviles.clothingapp.navigation.AppNavigation
 import com.moviles.clothingapp.viewmodel.LoginViewModel
-import com.moviles.clothingapp.viewmodel.ResetPasswordViewModel
-import com.moviles.clothingapp.viewmodel.WeatherViewModel
 import android.Manifest
 import android.os.Build
 import android.util.Log
@@ -31,17 +29,8 @@ class MainActivity : ComponentActivity() {
     private lateinit var connectivityObserver: ConnectivityObserver
     private lateinit var auth: FirebaseAuth
     private lateinit var loginViewModel: LoginViewModel
-    private lateinit var resetPasswordViewModel: ResetPasswordViewModel
-    private lateinit var weatherViewModel: WeatherViewModel
     private lateinit var firebaseAnalytics: FirebaseAnalytics
-    private var locationPermissionGranted = false
 
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        locationPermissionGranted = permissions.entries.all { it.value }
-        weatherViewModel = WeatherViewModel(this)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +38,6 @@ class MainActivity : ComponentActivity() {
         connectivityObserver = ConnectivityObserver(applicationContext)
         auth = Firebase.auth
         loginViewModel = LoginViewModel(auth)
-        resetPasswordViewModel = ResetPasswordViewModel(auth)
         Log.d("FirebasePerf", "Firebase Performance Monitoring initialized: ${FirebasePerformance.getInstance()}")
         firebaseAnalytics = Firebase.analytics
 
@@ -62,9 +50,6 @@ class MainActivity : ComponentActivity() {
         firebaseAnalytics.logEvent("device_info", deviceInfo)
         Log.d("DEVICES", ""+deviceInfo)
 
-        // Request location permissions
-        requestLocationPermissions()
-
         setContent {
             val navController = rememberNavController()
             val isConnected by connectivityObserver.isConnected.collectAsState(initial = false)
@@ -72,31 +57,7 @@ class MainActivity : ComponentActivity() {
                 navController = navController,
                 isConnected = isConnected,
                 loginViewModel = loginViewModel,
-                resetPasswordViewModel = resetPasswordViewModel,
-                weatherViewModel = weatherViewModel
             )
-        }
-    }
-
-    private fun requestLocationPermissions() {
-        when {
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                // Permissions already granted
-                locationPermissionGranted = true
-                weatherViewModel = WeatherViewModel(this)
-            }
-
-            else -> {
-                requestPermissionLauncher.launch(
-                    arrayOf(
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    )
-                )
-            }
         }
     }
 }

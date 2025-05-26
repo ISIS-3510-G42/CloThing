@@ -16,19 +16,15 @@ import com.moviles.clothingapp.view.CreatePost.CameraScreen
 import com.moviles.clothingapp.view.CreatePost.CreatePostScreen
 import com.moviles.clothingapp.view.DetailedPost.DetailedPostScreen
 import com.moviles.clothingapp.view.Discover.DiscoverScreen
-import com.moviles.clothingapp.view.Discover.WeatherCategoryScreen
 import com.moviles.clothingapp.view.HomeView.MainScreen
 import com.moviles.clothingapp.view.Login.CreateAccountScreen
 import com.moviles.clothingapp.view.Login.LoginScreen
-import com.moviles.clothingapp.view.Login.ResetPasswordScreen
 import com.moviles.clothingapp.view.Map.MapScreen
 import com.moviles.clothingapp.viewmodel.FavoritesViewModel
 import com.moviles.clothingapp.view.PostsCreated.PostsCreatedScreen
 import com.moviles.clothingapp.viewmodel.HomeViewModel
 import com.moviles.clothingapp.viewmodel.LoginViewModel
 import com.moviles.clothingapp.viewmodel.PostViewModel
-import com.moviles.clothingapp.viewmodel.ResetPasswordViewModel
-import com.moviles.clothingapp.viewmodel.WeatherViewModel
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -46,9 +42,7 @@ import androidx.compose.foundation.layout.Box
 @Composable
 fun AppNavigation(navController: NavHostController,
                   isConnected: Boolean,
-                  loginViewModel: LoginViewModel,
-                  resetPasswordViewModel: ResetPasswordViewModel,
-                  weatherViewModel: WeatherViewModel
+                  loginViewModel: LoginViewModel
 ) {
 
     if (!isConnected) {
@@ -71,8 +65,7 @@ fun AppNavigation(navController: NavHostController,
                         popUpTo("login") { inclusive = true }
                     }
                 },
-                navController = navController,
-                weatherViewModel = weatherViewModel
+                navController = navController
             )
         }
 
@@ -81,29 +74,14 @@ fun AppNavigation(navController: NavHostController,
             CreateAccountScreen(loginViewModel, navController)
         }
 
-        /* Reset password page. Route: resetPassword */
-        composable("resetPassword") {
-            ResetPasswordScreen(resetPasswordViewModel = resetPasswordViewModel, navController)
-        }
-
         /* Home/Main page. Route: home */
         composable("home") {
             val homeViewModel: HomeViewModel = viewModel()
-            MainScreen(navController, homeViewModel, weatherViewModel, isConnected)
+            MainScreen(navController, homeViewModel, isConnected)
 
         }
 
         /* Add more pages here below: */
-
-        /* Category page for the promo banner based on weather. Route: category/  */
-        composable(
-            route = "category/{categoryId}",
-            arguments = listOf(navArgument("categoryId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val categoryId = backStackEntry.arguments?.getString("categoryId") ?: "sale"
-            val postViewModel: PostViewModel = viewModel()
-            WeatherCategoryScreen(categoryId = categoryId, navController, viewModel = postViewModel)
-        }
 
 
         /* Discover page to show all posts. Route: discover/   */

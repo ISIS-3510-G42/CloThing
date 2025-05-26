@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.moviles.clothingapp.ui.theme.DarkGreen
-import com.moviles.clothingapp.view.Discover.getCategoryTitle
 import com.moviles.clothingapp.view.HomeView.BottomNavigationBar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -238,15 +237,10 @@ fun CreatePostScreen(navController: NavController, imageUri: String, viewModel: 
     SnackbarHost(hostState = snackbarHostState, modifier = Modifier.padding(60.dp))
 }
 
-
-
-
-
 /*  AUXILIARY FUNCTION -> Dropdown component for options
 *   Takes a set of options and displays them to user.
 *   Selected option is remembered.
  */
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
