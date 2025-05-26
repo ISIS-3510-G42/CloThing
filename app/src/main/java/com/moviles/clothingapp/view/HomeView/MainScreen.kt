@@ -1,44 +1,38 @@
 package com.moviles.clothingapp.view.HomeView
 
-
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.moviles.clothingapp.viewmodel.HomeViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
 import com.moviles.clothingapp.R
-import com.moviles.clothingapp.viewmodel.WeatherViewModel
-
+import com.moviles.clothingapp.viewmodel.HomeViewModel
 
 @Composable
 fun MainScreen(
     navController: NavController,
     homeViewModel: HomeViewModel = viewModel(),
-    weatherViewModel: WeatherViewModel = viewModel(),
     isConnected: Boolean
 ) {
-    val banner = weatherViewModel.bannerType.observeAsState()
-    val searchText = remember { mutableStateOf("") } // Store search text
-    Log.d("MainScreen", "Observed banner value: ${banner.value}")
+    val searchText = remember { mutableStateOf("") }
 
     val trace: Trace = remember { FirebasePerformance.getInstance().newTrace("MainScreen_Loading") }
     LaunchedEffect(Unit) {
-        trace.start() // Start tracing when screen loads
+        trace.start()
     }
 
     Scaffold(
@@ -51,7 +45,8 @@ fun MainScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            item{
+            //Banner conexion a internet
+            item {
                 if (!isConnected) {
                     Box(
                         modifier = Modifier
@@ -60,7 +55,7 @@ fun MainScreen(
                             .padding(vertical = 12.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        androidx.compose.material3.Text(
+                        Text(
                             text = "Sin conexión a internet",
                             color = androidx.compose.ui.graphics.Color.White
                         )
@@ -74,7 +69,6 @@ fun MainScreen(
                     modifier = Modifier.size(80.dp)
                 )
             }
-
             item {
                 SearchBar(
                     searchText = searchText.value,
@@ -84,17 +78,13 @@ fun MainScreen(
                     }
                 )
             }
-
             item { QuickActions() }
-            item { PromoBanner(bannerType = banner.value, navController = navController) }
             item { CategorySection(categoryList = categoryList) }
             item { FeaturedProducts(homeViewModel) }
         }
     }
 
-
-    // Stop trace metric (ms) when banner has been loaded
-    LaunchedEffect(banner.value) {
+    LaunchedEffect(Unit) {
         trace.stop()
     }
 }
