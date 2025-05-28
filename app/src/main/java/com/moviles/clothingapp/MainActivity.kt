@@ -23,21 +23,23 @@ import com.google.firebase.analytics.analytics
 import com.google.firebase.perf.FirebasePerformance
 import com.moviles.clothingapp.utils.ConnectivityObserver
 import androidx.compose.runtime.getValue
+import com.moviles.clothingapp.model.UserRepository
 
 
 class MainActivity : ComponentActivity() {
     private lateinit var connectivityObserver: ConnectivityObserver
     private lateinit var auth: FirebaseAuth
+    private lateinit var userRepository: UserRepository
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var firebaseAnalytics: FirebaseAnalytics
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         connectivityObserver = ConnectivityObserver(applicationContext)
         auth = Firebase.auth
-        loginViewModel = LoginViewModel(auth)
+        userRepository = UserRepository()
+        loginViewModel = LoginViewModel(auth, userRepository)
         Log.d("FirebasePerf", "Firebase Performance Monitoring initialized: ${FirebasePerformance.getInstance()}")
         firebaseAnalytics = Firebase.analytics
 
@@ -56,7 +58,7 @@ class MainActivity : ComponentActivity() {
             AppNavigation(
                 navController = navController,
                 isConnected = isConnected,
-                loginViewModel = loginViewModel,
+                loginViewModel = loginViewModel
             )
         }
     }
