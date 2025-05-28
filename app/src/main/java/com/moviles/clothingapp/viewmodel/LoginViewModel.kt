@@ -24,7 +24,8 @@ import kotlinx.coroutines.tasks.await
 *
  */
 class LoginViewModel(
-    private val auth: FirebaseAuth
+    private val auth: FirebaseAuth,
+    private val userRepository: UserRepository
 ) : ViewModel() {
     private val _navigateToHome = MutableStateFlow(false)
     val navigateToHome: StateFlow<Boolean> = _navigateToHome
@@ -34,8 +35,6 @@ class LoginViewModel(
 
     private val _signInErrorMessage = MutableStateFlow<String?>(null)
     val signInErrorMessage: StateFlow<String?> = _signInErrorMessage
-
-
 
     init {
         checkUserLoggedIn()
@@ -85,10 +84,31 @@ class LoginViewModel(
                     return@launch
                 }
 
-                auth.createUserWithEmailAndPassword(email, password).await()
+                val authResult = auth.createUserWithEmailAndPassword(email, password).await()
+                val firebaseUser = authResult.user
 
-                _navigateToHome.value = true
 
+                if (firebaseUser != null) {
+                    val userData = UserData(
+                        id = 0,  // or 0 if backend auto-generates it
+                        name = email.substringBefore("@"),
+                        email = email,
+                        postedProducts = "[]",
+                        boughtProducts = "[]"
+                    )
+
+                    val createdUser = userRepository.createUser(userData)
+
+                    if (createdUser == null) {
+                        _signUpErrorMessage.value = "Error al registrar usuario en el backend"
+                        return@launch
+                    }
+
+                    _navigateToHome.value = true
+
+                } else {
+                    _signUpErrorMessage.value = "No se pudo obtener el usuario de Firebase"
+                }
 
             } catch (e: Exception) {
                 val errorMessage = when (e) {

@@ -157,7 +157,8 @@ fun ProfileScreen(
                     Log.d("ProfileScreen", "Logging out")
                     loginViewModel.signOut()
                     navController.navigate("login") {
-                        popUpTo("main") { inclusive = true }
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
                     }
                 },
                 modifier = Modifier
