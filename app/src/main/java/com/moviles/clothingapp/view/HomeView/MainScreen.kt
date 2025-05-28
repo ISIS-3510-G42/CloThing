@@ -56,7 +56,7 @@ fun MainScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Sin conexión a internet",
+                            text = "No internet connection, showing cache",
                             color = androidx.compose.ui.graphics.Color.White
                         )
                     }
