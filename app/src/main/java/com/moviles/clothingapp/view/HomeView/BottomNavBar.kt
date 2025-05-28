@@ -2,6 +2,7 @@ package com.moviles.clothingapp.view.HomeView
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.CameraAlt
 import androidx.compose.material.icons.rounded.ChatBubbleOutline
 import androidx.compose.material.icons.rounded.Explore
@@ -45,7 +46,8 @@ fun BottomNavigationBar(navController: NavController) {
             BottomNavItem("camera", Icons.Rounded.CameraAlt, "Camera"), // Implemented: YES
             BottomNavItem("map/", Icons.Rounded.Map, "Map"), // Implemented: YES
             BottomNavItem("postCreated", Icons.Rounded.Checkroom, "Created"),
-            BottomNavItem("favorites", Icons.Rounded.Favorite, "Favorites") // Implemented: YES
+            BottomNavItem("favorites", Icons.Rounded.Favorite, "Favorites"), // Implemented: YES
+            BottomNavItem("profile", Icons.Rounded.AccountCircle, "Profile" ) //Implemented: Halfway through
         )
 
         val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
