@@ -10,8 +10,8 @@ data class UserData(
     @Json(name="id") val id: Int? = null,
     @Json(name="name") val name: String,
     @Json(name="email") val email: String,
-    @Json(name="postedProducts") val postedProducts: List<Int>,
-    @Json(name="boughtProducts") val boughtProducts: List<Int>
+    @Json(name="postedProducts") val postedProducts: String,
+    @Json(name="boughtProducts") val boughtProducts: String
 )
 
 interface UserDataDAO {

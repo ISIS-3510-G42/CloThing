@@ -24,8 +24,7 @@ import kotlinx.coroutines.tasks.await
 *
  */
 class LoginViewModel(
-    private val auth: FirebaseAuth,
-    private val userRepository: UserRepository
+    private val auth: FirebaseAuth
 ) : ViewModel() {
     private val _navigateToHome = MutableStateFlow(false)
     val navigateToHome: StateFlow<Boolean> = _navigateToHome
@@ -60,10 +59,6 @@ class LoginViewModel(
 
                 auth.signInWithEmailAndPassword(email, password) // Sign in with Firebase
                     .await()
-                val user = auth.currentUser
-
-                // GUARDAR email actual en el repositorio
-                userRepository.setCurrentUserEmail(user?.email ?: "")
 
                 _navigateToHome.value = true // Navigate to the home screen
 
@@ -91,23 +86,7 @@ class LoginViewModel(
                 }
 
                 auth.createUserWithEmailAndPassword(email, password).await()
-                val user = auth.currentUser
 
-                if (user != null) {
-                    val newUserData = UserData(
-                        id = null,
-                        email = user.email ?: "",
-                        name = email.substringBefore("@"),
-                        postedProducts = emptyList(),
-                        boughtProducts = emptyList()
-                    )
-
-                    // Llamas al backend para registrar al nuevo usuario
-                    userRepository.createUser(newUserData)
-
-                    // GUARDAR email en el repositorio
-                    userRepository.setCurrentUserEmail(user.email ?: "")
-                }
                 _navigateToHome.value = true
 
 

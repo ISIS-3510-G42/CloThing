@@ -47,6 +47,7 @@ fun AppNavigation(navController: NavHostController,
                   loginViewModel: LoginViewModel
 ) {
 
+    //Check connection to internet
     if (!isConnected) {
         Box(modifier = Modifier.fillMaxWidth().background(Color.Red)) {
             Text(

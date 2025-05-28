@@ -83,7 +83,7 @@ class UserRepository {
         @GET("users/{userId}")
         suspend fun fetchUserById(@Path("userId") userId: Int): Response<UserData>
 
-        @GET("emails/{userEmail}")
+        @GET("users/email/{userEmail}")
         suspend fun fetchUserByEmail(@Path("userEmail") userEmail: String): Response<UserData>
 
         @POST("create-user/")

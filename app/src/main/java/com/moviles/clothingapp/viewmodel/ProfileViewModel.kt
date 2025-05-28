@@ -6,6 +6,7 @@ import com.moviles.clothingapp.model.UserRepository
 import com.moviles.clothingapp.model.PostData
 import com.moviles.clothingapp.model.UserData
 import kotlinx.coroutines.launch
+import org.json.JSONArray
 
 class ProfileViewModel(application: Application) : AndroidViewModel(application) {
     private val repo = UserRepository()
@@ -24,18 +25,6 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
 
     private val _boughtProducts = MutableLiveData<List<PostData>>(emptyList())
     val boughtProducts: LiveData<List<PostData>> = _boughtProducts
-
-    // Load user data from email and update IDs
-    fun loadUserData(userEmail: String) {
-        viewModelScope.launch {
-            val fetchedUser = repo.fetchUserByEmail(userEmail)
-            _user.value = fetchedUser
-            fetchedUser?.let {
-                _postedIds.value = it.postedProducts.toSet()
-                _boughtIds.value = it.boughtProducts.toSet()
-            }
-        }
-    }
 
     // Filter all products by posted IDs
     fun updatePostedProducts(allProducts: List<PostData>) {
@@ -62,11 +51,32 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
             if (email != null) {
                 val fetchedUser = repo.fetchUserByEmail(email)
                 _user.value = fetchedUser
-                fetchedUser?.let {
-                    _postedIds.value = it.postedProducts.toSet()
-                    _boughtIds.value = it.boughtProducts.toSet()
+                fetchedUser?.let { user ->
+                    // Parse postedProducts (String "[1,2,3]" → List<Int> → Set<Int>)
+                    val postedIdsList = parseJsonArrayString(user.postedProducts)
+                    _postedIds.value = postedIdsList.toSet()
+
+                    // Parse boughtProducts (String "[16,17,18]" → List<Int> → Set<Int>)
+                    val boughtIdsList = parseJsonArrayString(user.boughtProducts)
+                    _boughtIds.value = boughtIdsList.toSet()
+
+                    // (Optional) Fetch PostData objects if needed
+                    // _postedProducts.value = repo.fetchPostsByIds(postedIdsList)
+                    // _boughtProducts.value = repo.fetchPostsByIds(boughtIdsList)
                 }
             }
+        }
+    }
+
+    // Helper: Convert "[1,2,3]" → List<Int>
+    private fun parseJsonArrayString(jsonString: String): List<Int> {
+        return try {
+            JSONArray(jsonString)
+                .let { array ->
+                    (0 until array.length()).map { array.getInt(it) }
+                }
+        } catch (e: Exception) {
+            emptyList() // Fallback if parsing fails
         }
     }
 }

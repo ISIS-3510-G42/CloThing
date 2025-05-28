@@ -31,16 +31,13 @@ class MainActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var firebaseAnalytics: FirebaseAnalytics
-    private lateinit var userRepository: UserRepository
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         connectivityObserver = ConnectivityObserver(applicationContext)
         auth = Firebase.auth
-        userRepository = UserRepository()
-        loginViewModel = LoginViewModel(auth, userRepository)
+        loginViewModel = LoginViewModel(auth)
         Log.d("FirebasePerf", "Firebase Performance Monitoring initialized: ${FirebasePerformance.getInstance()}")
         firebaseAnalytics = Firebase.analytics
 
