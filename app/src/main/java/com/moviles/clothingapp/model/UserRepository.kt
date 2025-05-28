@@ -1,5 +1,6 @@
 package com.moviles.clothingapp.model
 
+import android.net.Uri
 import android.util.Log
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -42,8 +43,7 @@ class UserRepository {
 
     suspend fun fetchUserByEmail(userEmail: String): UserData? {
         return try {
-            val encodedEmail = java.net.URLEncoder.encode(userEmail, "UTF-8")
-            val response = apiService.fetchUserByEmail(encodedEmail)
+            val response = apiService.fetchUserByEmail(userEmail)
             if (response.isSuccessful) {
                 response.body()
             } else {

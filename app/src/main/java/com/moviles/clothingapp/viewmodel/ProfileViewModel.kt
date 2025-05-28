@@ -7,6 +7,8 @@ import com.moviles.clothingapp.model.PostData
 import com.moviles.clothingapp.model.UserData
 import kotlinx.coroutines.launch
 import org.json.JSONArray
+import com.google.firebase.auth.FirebaseAuth
+
 
 class ProfileViewModel(application: Application) : AndroidViewModel(application) {
     private val repo = UserRepository()
@@ -44,29 +46,25 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         _boughtProducts.value = products
     }
 
-    // Load current user's information
     fun loadCurrentUserData() {
         viewModelScope.launch {
-            val email = repo.getCurrentUserEmail()
+            val email = FirebaseAuth.getInstance().currentUser?.email
             if (email != null) {
                 val fetchedUser = repo.fetchUserByEmail(email)
                 _user.value = fetchedUser
                 fetchedUser?.let { user ->
-                    // Parse postedProducts (String "[1,2,3]" → List<Int> → Set<Int>)
+                    // Parse postedProducts
                     val postedIdsList = parseJsonArrayString(user.postedProducts)
                     _postedIds.value = postedIdsList.toSet()
 
-                    // Parse boughtProducts (String "[16,17,18]" → List<Int> → Set<Int>)
+                    // Parse boughtProducts
                     val boughtIdsList = parseJsonArrayString(user.boughtProducts)
                     _boughtIds.value = boughtIdsList.toSet()
-
-                    // (Optional) Fetch PostData objects if needed
-                    // _postedProducts.value = repo.fetchPostsByIds(postedIdsList)
-                    // _boughtProducts.value = repo.fetchPostsByIds(boughtIdsList)
                 }
             }
         }
     }
+
 
     // Helper: Convert "[1,2,3]" → List<Int>
     private fun parseJsonArrayString(jsonString: String): List<Int> {

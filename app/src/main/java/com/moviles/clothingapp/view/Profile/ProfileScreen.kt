@@ -1,19 +1,17 @@
 package com.moviles.clothingapp.view.Profile
 
-import androidx.compose.foundation.Image
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.moviles.clothingapp.model.PostData
@@ -35,18 +33,22 @@ fun ProfileScreen(
     val postedProducts by profileViewModel.postedProducts.observeAsState(emptyList())
     val boughtProducts by profileViewModel.boughtProducts.observeAsState(emptyList())
 
-    // Update lists when IDs change
+    Log.d("ProfileScreen", "Recomposing ProfileScreen")
+    Log.d("ProfileScreen", "Current user: $user")
+
     LaunchedEffect(profileViewModel.postedIds.value) {
+        Log.d("ProfileScreen", "postedIds changed: ${profileViewModel.postedIds.value}")
         profileViewModel.updatePostedProducts(allProducts)
     }
     LaunchedEffect(profileViewModel.boughtIds.value) {
+        Log.d("ProfileScreen", "boughtIds changed: ${profileViewModel.boughtIds.value}")
         profileViewModel.updateBoughtProducts(allProducts)
     }
 
     LaunchedEffect(Unit) {
+        Log.d("ProfileScreen", "Calling loadCurrentUserData()")
         profileViewModel.loadCurrentUserData()
     }
-
 
     Scaffold(
         topBar = {
@@ -61,7 +63,7 @@ fun ProfileScreen(
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.weight(1f)
                 )
-                IconButton(onClick = { /* Acción opcional */ }) {
+                IconButton(onClick = { }) {
                     Icon(Icons.Rounded.AccountCircle, contentDescription = "Profile Icon")
                 }
             }
@@ -77,7 +79,6 @@ fun ProfileScreen(
                 .padding(16.dp)
         ) {
             ConnectionBanner(isConnected = isConnected)
-
             Spacer(modifier = Modifier.height(16.dp))
 
             // User Information
@@ -92,6 +93,8 @@ fun ProfileScreen(
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
+                    Log.d("ProfileScreen", "Displaying user name: ${user?.name}")
+                    Log.d("ProfileScreen", "Displaying user email: ${user?.email}")
                     Text(
                         text = user?.name ?: "Nombre no disponible",
                         style = MaterialTheme.typography.titleMedium
@@ -114,6 +117,7 @@ fun ProfileScreen(
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .height(200.dp) // Limita la altura de la lista
                     .padding(vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -134,6 +138,7 @@ fun ProfileScreen(
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .height(200.dp) // Limita la altura de la lista
                     .padding(vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -144,12 +149,15 @@ fun ProfileScreen(
                 }
             }
 
-            //Log out button
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Cerrar sesión Button
             Button(
                 onClick = {
+                    Log.d("ProfileScreen", "Logging out")
                     loginViewModel.signOut()
                     navController.navigate("login") {
-                        popUpTo("main") { inclusive = true } // Limpia la pila para que no vuelva al Home con back
+                        popUpTo("main") { inclusive = true }
                     }
                 },
                 modifier = Modifier
@@ -159,7 +167,6 @@ fun ProfileScreen(
             ) {
                 Text("Cerrar sesión")
             }
-
         }
     }
 }
