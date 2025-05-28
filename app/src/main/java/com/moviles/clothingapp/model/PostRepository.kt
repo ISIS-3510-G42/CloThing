@@ -1,6 +1,7 @@
 package com.moviles.clothingapp.repository
 
 import android.util.Log
+import com.moviles.clothingapp.cache.CacheManager
 import com.moviles.clothingapp.model.PostData
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -28,14 +29,22 @@ class PostRepository {
         return try {
             val response = apiService.fetchClothes()
             if (response.isSuccessful) {
-                response.body()
+                val products = response.body()
+                products?.let {
+                    CacheManager.discoverCache.putAll(it)
+                }
+                products
             } else {
                 Log.e("PostRepository", "Response failed: ${response.code()}")
                 null
             }
         } catch (e: Exception) {
             Log.e("PostRepository", "Error: ${e.message}")
-            null
+            if (CacheManager.discoverCache.isNotEmpty()){
+                CacheManager.discoverCache.getAll()
+            } else {
+                null
+            }
         }
     }
 
@@ -102,6 +111,10 @@ class PostRepository {
             Log.e("PostRepository", "Network error: ${e.message}")
             null
         }
+    }
+
+    fun getCachedDiscoverPost(): List<PostData>{
+        return CacheManager.discoverCache.getAll()
     }
 
 

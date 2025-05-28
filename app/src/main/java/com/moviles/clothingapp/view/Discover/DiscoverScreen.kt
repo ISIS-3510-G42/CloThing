@@ -67,6 +67,8 @@ fun DiscoverScreen(navController: NavController, viewModel: PostViewModel, query
         }
     }
 
+
+
     Scaffold(
         topBar = {
             Column {

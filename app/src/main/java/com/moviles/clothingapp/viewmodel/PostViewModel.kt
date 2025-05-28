@@ -3,6 +3,7 @@ package com.moviles.clothingapp.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.moviles.clothingapp.cache.CacheManager
 import com.moviles.clothingapp.model.PostData
 import com.moviles.clothingapp.repository.PostRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,16 +25,30 @@ class PostViewModel : ViewModel() {
     private val _imageUrl = MutableStateFlow<String?>(null)
     val imageUrl: StateFlow<String?> get() = _imageUrl
 
+    private val _isOffline = MutableStateFlow(false)
+    val isOffline: StateFlow<Boolean> get() = _isOffline
+
     init {
         fetchPostsFiltered()
     }
 
-    private fun fetchPostsFiltered() {
+    fun fetchPostsFiltered() {
         viewModelScope.launch {
-            val result = repository.fetchPostsFiltered() // Ensure repository is returning data
-            _posts.value = result ?: emptyList()
+            val result = repository.fetchPostsFiltered()
+            if (result != null && result.isNotEmpty()) {
+                _posts.value = result
+                _isOffline.value = false
+                CacheManager.discoverCache.putAll(result) // actualizar cache aquí si quieres
+            } else {
+                val cached = CacheManager.discoverCache.getAll()
+                _posts.value = cached
+                _isOffline.value = true
+            }
         }
     }
+
+
+
 
 
     /* Fetch products by category (weather) */

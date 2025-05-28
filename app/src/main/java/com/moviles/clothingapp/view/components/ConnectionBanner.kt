@@ -23,7 +23,7 @@ fun ConnectionBanner(isConnected: Boolean) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "No Internet Connection",
+                text = "No Internet Connection, Showing Cache",
                 color = androidx.compose.ui.graphics.Color.White
             )
         }
