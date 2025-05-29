@@ -13,7 +13,9 @@ import retrofit2.http.POST
 
 class PostRepository {
 
-    private val BASE_URL = "http://10.0.2.2:8000/" // this URL of localhost since we run in emulator
+    //private val BASE_URL = "http://10.0.2.2:8000/" // this URL of localhost since we run in emulator
+    private val BASE_URL = "http://34.176.82.66:8000/" // this URL of localhost since we run in emulator
+
 
     private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
     private val retrofit: Retrofit = Retrofit.Builder()
