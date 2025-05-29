@@ -1,22 +1,25 @@
 package com.moviles.clothingapp.viewmodel
 
 import android.app.Application
+import android.os.Environment
+import android.util.Log
+import android.widget.Toast // ✅ UPDATED
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.moviles.clothingapp.model.CartRepository
 import com.moviles.clothingapp.model.PostData
+import com.moviles.clothingapp.model.ReceiptRepository
 import com.moviles.clothingapp.model.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import android.util.Log
-
 
 class CartViewModel(application: Application) : AndroidViewModel(application) {
     private val repo = CartRepository.CartRepository(application)
     private val userRepo = UserRepository()
+    private val receiptRepo = ReceiptRepository(application)
 
     private val _cartIds = MutableLiveData<Set<String>>(repo.getCartIds())
     val cartIds: LiveData<Set<String>> = _cartIds
@@ -74,6 +77,25 @@ class CartViewModel(application: Application) : AndroidViewModel(application) {
                     Log.d("CartViewModel", "✅ Resultado de updateUserProducts: $updatedUser")
 
                     if (updatedUser != null) {
+                        val cartItems = _cartProducts.value ?: emptyList()
+                        val receiptText = generateReceiptText(cartItems)
+                        val receiptResult = receiptRepo.saveReceiptToFile(receiptText)
+
+                        receiptResult.onSuccess { path ->
+                            Log.d("CartViewModel", "✅ Receipt saved at: $path")
+
+                            val receiptDir = receiptRepo.getExternalFilesDir() // ✅ Get receipt dir
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(
+                                    getApplication(),
+                                    "Receipt saved in: $receiptDir",
+                                    Toast.LENGTH_LONG
+                                ).show() // ✅ Show Toast
+                            }
+                        }.onFailure { e ->
+                            Log.e("CartViewModel", "❌ Failed to save receipt", e)
+                        }
+
                         repo.clearCart()
                         Log.d("CartViewModel", "🧹 Carrito limpiado correctamente")
 
@@ -99,7 +121,6 @@ class CartViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-
     private fun parseStringList(input: String?): List<String> {
         return input?.removeSurrounding("[", "]")
             ?.split(",")
@@ -107,5 +128,33 @@ class CartViewModel(application: Application) : AndroidViewModel(application) {
             ?.filter { it.isNotEmpty() }
             ?: emptyList()
     }
-}
 
+    private fun generateReceiptText(products: List<PostData>): String {
+        val builder = StringBuilder()
+        val email = userRepo.getCurrentUserEmail()
+        val name = email?.substringBefore("@") ?: "Unknown User"
+
+        builder.appendLine("Clothing App Receipt for $name")
+        builder.appendLine("Date: ${java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(java.util.Date())}")
+        builder.appendLine("===================================")
+
+        var total = 0.0
+        for (product in products) {
+            val priceString = product.price.replace(",", "")
+            val price = priceString.toDoubleOrNull() ?: 0.0
+
+            Log.d("CartViewModel", "Product: ${product.name}, Price: ${product.price}, Type: ${product.price::class.java.simpleName}, Parsed Price: $price")
+
+            if (price == 0.0) {
+                Log.w("CartViewModel", "⚠️ Product price is invalid or zero: ${product.name}")
+            }
+
+            builder.appendLine("${product.name} - ${product.brand} - ${product.size} - $${"%.2f".format(price)}")
+            total += price
+        }
+
+        builder.appendLine("===================================")
+        builder.appendLine("Total: $${"%.2f".format(total)}")
+        return builder.toString()
+    }
+}
