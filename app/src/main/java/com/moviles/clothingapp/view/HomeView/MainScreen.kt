@@ -78,7 +78,6 @@ fun MainScreen(
                     }
                 )
             }
-            item { QuickActions() }
             item { CategorySection(categoryList = categoryList) }
             item { FeaturedProducts(homeViewModel) }
         }

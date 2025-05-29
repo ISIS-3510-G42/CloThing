@@ -139,7 +139,7 @@ fun ProfileScreen(
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(500.dp) // Limita la altura de la lista
+                    .height(300.dp) // Limita la altura de la lista
                     .padding(vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -149,8 +149,6 @@ fun ProfileScreen(
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
 
             // Cerrar sesión Button
             Button(
