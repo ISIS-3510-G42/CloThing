@@ -2,16 +2,15 @@ package com.moviles.clothingapp.view.Login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.perf.metrics.Trace
@@ -25,9 +24,9 @@ fun CreateAccountScreen(loginViewModel: LoginViewModel, navController: NavContro
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+
     val trace: Trace = remember { FirebasePerformance.getInstance().newTrace("CreateAccountScreen_Loading") }
 
-    // Observar si ocurre un error
     val signUpErrorMessage by loginViewModel.signUpErrorMessage.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -42,22 +41,26 @@ fun CreateAccountScreen(loginViewModel: LoginViewModel, navController: NavContro
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Image(
             painter = painterResource(id = R.drawable.logo),
             contentDescription = "App Logo",
-            modifier = Modifier
-                .size(300.dp)
+            modifier = Modifier.size(300.dp)
         )
-
 
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
             label = { Text("Correo") },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next,
+                autoCorrect = false,
+                capitalization = KeyboardCapitalization.None
+            ),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 8.dp)
+                .padding(bottom = 8.dp),
+            singleLine = true
         )
 
         OutlinedTextField(
@@ -65,9 +68,16 @@ fun CreateAccountScreen(loginViewModel: LoginViewModel, navController: NavContro
             onValueChange = { password = it },
             label = { Text("Contraseña") },
             visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Next,
+                autoCorrect = false,
+                capitalization = KeyboardCapitalization.None
+            ),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 8.dp)
+                .padding(bottom = 8.dp),
+            singleLine = true
         )
 
         OutlinedTextField(
@@ -75,14 +85,20 @@ fun CreateAccountScreen(loginViewModel: LoginViewModel, navController: NavContro
             onValueChange = { confirmPassword = it },
             label = { Text("Confirmar contraseña") },
             visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done,
+                autoCorrect = false,
+                capitalization = KeyboardCapitalization.None
+            ),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp)
+                .padding(bottom = 16.dp),
+            singleLine = true
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Solo si hay error se muestra esto:
         signUpErrorMessage?.let { errorMsg ->
             Text(
                 text = errorMsg,
@@ -91,7 +107,6 @@ fun CreateAccountScreen(loginViewModel: LoginViewModel, navController: NavContro
                 modifier = Modifier.padding(vertical = 8.dp)
             )
 
-            // Quitar el error despues de 500ms
             LaunchedEffect(errorMsg) {
                 delay(5000)
                 loginViewModel.clearSignUpError()
@@ -115,10 +130,7 @@ fun CreateAccountScreen(loginViewModel: LoginViewModel, navController: NavContro
         }
 
         TextButton(
-            onClick = {
-                // Navigate back to login screen
-                navController.popBackStack()
-            },
+            onClick = { navController.popBackStack() },
             modifier = Modifier.padding(top = 8.dp)
         ) {
             Text("Ya tienes una cuenta")
