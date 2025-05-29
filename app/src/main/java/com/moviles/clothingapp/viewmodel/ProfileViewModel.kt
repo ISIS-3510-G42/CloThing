@@ -16,11 +16,11 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
     private val _user = MutableLiveData<UserData?>()
     val user: LiveData<UserData?> = _user
 
-    private val _postedIds = MutableLiveData<Set<Int>>(emptySet())
+    /***private val _postedIds = MutableLiveData<Set<Int>>(emptySet())
     val postedIds: LiveData<Set<Int>> = _postedIds
 
     private val _postedProducts = MutableLiveData<List<PostData>>(emptyList())
-    val postedProducts: LiveData<List<PostData>> = _postedProducts
+    val postedProducts: LiveData<List<PostData>> = _postedProducts***/
 
     private val _boughtIds = MutableLiveData<Set<Int>>(emptySet())
     val boughtIds: LiveData<Set<Int>> = _boughtIds
@@ -29,13 +29,13 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
     val boughtProducts: LiveData<List<PostData>> = _boughtProducts
 
     // Filter all products by posted IDs
-    fun updatePostedProducts(allProducts: List<PostData>) {
+    /***fun updatePostedProducts(allProducts: List<PostData>) {
         val postedIds = _postedIds.value ?: emptySet()
         val products = allProducts.filter { post ->
             post.id?.toIntOrNull() in postedIds
         }
         _postedProducts.value = products
-    }
+    }***/
 
     // Filter all products by bought IDs
     fun updateBoughtProducts(allProducts: List<PostData>) {
@@ -48,14 +48,14 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
 
     fun loadCurrentUserData() {
         viewModelScope.launch {
-            val email = FirebaseAuth.getInstance().currentUser?.email
+            val email = repo.getCurrentUserEmail()
             if (email != null) {
                 val fetchedUser = repo.fetchUserByEmail(email)
                 _user.value = fetchedUser
                 fetchedUser?.let { user ->
                     // Parse postedProducts
-                    val postedIdsList = parseJsonArrayString(user.postedProducts)
-                    _postedIds.value = postedIdsList.toSet()
+                    //val postedIdsList = parseJsonArrayString(user.postedProducts)
+                    //_postedIds.value = postedIdsList.toSet()
 
                     // Parse boughtProducts
                     val boughtIdsList = parseJsonArrayString(user.boughtProducts)

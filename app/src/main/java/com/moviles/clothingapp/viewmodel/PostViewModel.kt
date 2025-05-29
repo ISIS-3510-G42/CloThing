@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.moviles.clothingapp.cache.CacheManager
 import com.moviles.clothingapp.model.PostData
-import com.moviles.clothingapp.repository.PostRepository
+import com.moviles.clothingapp.model.PostRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

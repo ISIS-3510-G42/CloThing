@@ -1,8 +1,7 @@
-package com.moviles.clothingapp.repository
+package com.moviles.clothingapp.model
 
 import android.util.Log
 import com.moviles.clothingapp.cache.CacheManager
-import com.moviles.clothingapp.model.PostData
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Response
