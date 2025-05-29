@@ -21,6 +21,7 @@ import com.moviles.clothingapp.view.Login.CreateAccountScreen
 import com.moviles.clothingapp.view.Login.LoginScreen
 import com.moviles.clothingapp.view.Map.MapScreen
 import com.moviles.clothingapp.viewmodel.FavoritesViewModel
+import com.moviles.clothingapp.viewmodel.CartViewModel
 import com.moviles.clothingapp.view.PostsCreated.PostsCreatedScreen
 import com.moviles.clothingapp.view.Profile.ProfileScreen
 import com.moviles.clothingapp.viewmodel.HomeViewModel
@@ -33,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.moviles.clothingapp.view.favorites.FavoritesScreen
 import androidx.compose.foundation.layout.Box
+import com.moviles.clothingapp.view.favorites.CartScreen
 import com.moviles.clothingapp.viewmodel.ProfileViewModel
 
 
@@ -105,7 +107,6 @@ fun AppNavigation(navController: NavHostController,
                 productId = postId,
                 viewModel = postViewModel,
                 onBack = { navController.popBackStack() },
-                onAddToCart = { /* lógica para agregar al carrito */ },
                 isConnected = isConnected
             )
         }
@@ -139,6 +140,15 @@ fun AppNavigation(navController: NavHostController,
             val allProducts by postViewModel.posts.collectAsState()
 
             FavoritesScreen(navController,isConnected, favoritesViewModel, allProducts)
+        }
+
+        //Cart view composable
+        composable("cart") {
+            val cartViewModel: CartViewModel = viewModel()
+            val postViewModel: PostViewModel = viewModel()
+            val allProducts by postViewModel.posts.collectAsState()
+
+            CartScreen(navController,isConnected, cartViewModel, allProducts)
         }
 
         //Profile view composable

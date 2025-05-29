@@ -2,7 +2,7 @@ package com.moviles.clothingapp.viewmodel
 
 import androidx.lifecycle.*
 import com.moviles.clothingapp.model.PostData
-import com.moviles.clothingapp.repository.PostRepository
+import com.moviles.clothingapp.model.PostRepository
 import kotlinx.coroutines.launch
 
 

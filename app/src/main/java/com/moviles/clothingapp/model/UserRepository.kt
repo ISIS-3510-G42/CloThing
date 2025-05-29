@@ -1,16 +1,13 @@
 package com.moviles.clothingapp.model
 
-import android.net.Uri
 import android.util.Log
+import com.google.firebase.auth.FirebaseAuth
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 class UserRepository {
 
@@ -25,21 +22,6 @@ class UserRepository {
     private val apiService: ApiService = retrofit.create(ApiService::class.java)
 
     private var currentUserEmail: String? = null
-
-    suspend fun fetchUserById(userId: Int): UserData? {
-        return try {
-            val response = apiService.fetchUserById(userId)
-            if (response.isSuccessful) {
-                response.body()
-            } else {
-                Log.e("UserRepository", "Error fetching user by ID: ${response.code()}")
-                null
-            }
-        } catch (e: Exception) {
-            Log.e("UserRepository", "Exception: ${e.message}")
-            null
-        }
-    }
 
     suspend fun fetchUserByEmail(userEmail: String): UserData? {
         return try {
@@ -71,22 +53,40 @@ class UserRepository {
         }
     }
 
-    fun setCurrentUserEmail(email: String) {
-        currentUserEmail = email
+    suspend fun updateUserProducts(userEmail: String, postedProducts: String?, boughtProducts: String?): UserData? {
+        val updateMap = mutableMapOf<String, String?>()
+        postedProducts?.let { updateMap["postedProducts"] = it }
+        boughtProducts?.let { updateMap["boughtProducts"] = it }
+
+        return try {
+            val response = apiService.updateUserByEmail(userEmail, updateMap)
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                Log.e("UserRepository", "Error updating user: ${response.code()}")
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Exception: ${e.message}")
+            null
+        }
     }
 
     fun getCurrentUserEmail(): String? {
-        return currentUserEmail
+        return FirebaseAuth.getInstance().currentUser?.email
     }
 
     interface ApiService {
-        @GET("users/{userId}")
-        suspend fun fetchUserById(@Path("userId") userId: Int): Response<UserData>
-
         @GET("users/email/{userEmail}")
         suspend fun fetchUserByEmail(@Path("userEmail") userEmail: String): Response<UserData>
 
         @POST("create-user/")
         suspend fun createUser(@Body userData: UserData): Response<UserData>
+
+        @PUT("users/email/{userEmail}")
+        suspend fun updateUserByEmail(
+            @Path("userEmail") userEmail: String,
+            @Body updates: Map<String, String?>
+        ): Response<UserData>
     }
 }

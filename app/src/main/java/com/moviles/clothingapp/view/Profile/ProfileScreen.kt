@@ -30,16 +30,17 @@ fun ProfileScreen(
     allProducts: List<PostData>
 ) {
     val user by profileViewModel.user.observeAsState()
-    val postedProducts by profileViewModel.postedProducts.observeAsState(emptyList())
+    //val postedProducts by profileViewModel.postedProducts.observeAsState(emptyList())
     val boughtProducts by profileViewModel.boughtProducts.observeAsState(emptyList())
 
     Log.d("ProfileScreen", "Recomposing ProfileScreen")
     Log.d("ProfileScreen", "Current user: $user")
 
-    LaunchedEffect(profileViewModel.postedIds.value) {
+    /***LaunchedEffect(profileViewModel.postedIds.value) {
         Log.d("ProfileScreen", "postedIds changed: ${profileViewModel.postedIds.value}")
         profileViewModel.updatePostedProducts(allProducts)
-    }
+    }***/
+
     LaunchedEffect(profileViewModel.boughtIds.value) {
         Log.d("ProfileScreen", "boughtIds changed: ${profileViewModel.boughtIds.value}")
         profileViewModel.updateBoughtProducts(allProducts)
@@ -109,7 +110,7 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Posted Products
+            /*** Posted Products
             Text(
                 text = "Productos publicados",
                 style = MaterialTheme.typography.titleMedium
@@ -128,7 +129,7 @@ fun ProfileScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(24.dp)) ***/
 
             // Bought Products
             Text(
@@ -138,7 +139,7 @@ fun ProfileScreen(
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp) // Limita la altura de la lista
+                    .height(500.dp) // Limita la altura de la lista
                     .padding(vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {

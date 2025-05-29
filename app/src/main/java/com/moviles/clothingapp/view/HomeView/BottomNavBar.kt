@@ -42,11 +42,11 @@ fun BottomNavigationBar(navController: NavController) {
         val items = listOf(
             BottomNavItem("home", Icons.Rounded.Home, "Home"), // Implemented: YES
             BottomNavItem("discover/", Icons.Rounded.Explore, "Discover"), // Implemented: YES
-            //BottomNavItem("cart", Icons.Rounded.ShoppingCart, "Cart"), // Implemented: NO
-            BottomNavItem("camera", Icons.Rounded.CameraAlt, "Camera"), // Implemented: YES
             BottomNavItem("map/", Icons.Rounded.Map, "Map"), // Implemented: YES
-            BottomNavItem("postCreated", Icons.Rounded.Checkroom, "Created"),
             BottomNavItem("favorites", Icons.Rounded.Favorite, "Favorites"), // Implemented: YES
+            BottomNavItem("cart", Icons.Rounded.ShoppingCart, "Cart"), // Implemented: YES
+            BottomNavItem("camera", Icons.Rounded.CameraAlt, "Camera"), // Implemented: YES
+            BottomNavItem("postCreated", Icons.Rounded.Checkroom, "Created"),
             BottomNavItem("profile", Icons.Rounded.AccountCircle, "Profile" ) //Implemented: Halfway through
         )
 
