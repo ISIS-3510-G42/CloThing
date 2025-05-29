@@ -52,29 +52,29 @@ class CartViewModel(application: Application) : AndroidViewModel(application) {
 
     fun buyProducts(onResult: (Boolean) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d("CartViewModel", "🛒 Iniciando proceso de compra...")
+            Log.d("CartViewModel", " Iniciando proceso de compra...")
 
             val userEmail = userRepo.getCurrentUserEmail()
-            Log.d("CartViewModel", "📧 Email actual: $userEmail")
+            Log.d("CartViewModel", " Email actual: $userEmail")
 
             if (userEmail != null) {
                 val user = userRepo.fetchUserByEmail(userEmail)
-                Log.d("CartViewModel", "👤 Usuario obtenido: $user")
+                Log.d("CartViewModel", " Usuario obtenido: $user")
 
                 if (user != null) {
                     val currentBought = parseStringList(user.boughtProducts)
                     val cartList = _cartIds.value?.toList() ?: emptyList()
 
-                    Log.d("CartViewModel", "🛍️ Productos ya comprados: $currentBought")
-                    Log.d("CartViewModel", "🛒 Productos en carrito: $cartList")
+                    Log.d("CartViewModel", " Productos ya comprados: $currentBought")
+                    Log.d("CartViewModel", " Productos en carrito: $cartList")
 
                     val newBought = currentBought + cartList
                     val updatedString = newBought.toSet().joinToString(prefix = "[", postfix = "]")
 
-                    Log.d("CartViewModel", "📦 Nueva cadena para boughtProducts: $updatedString")
+                    Log.d("CartViewModel", " Nueva cadena para boughtProducts: $updatedString")
 
                     val updatedUser = userRepo.updateUserProducts(userEmail, null, updatedString)
-                    Log.d("CartViewModel", "✅ Resultado de updateUserProducts: $updatedUser")
+                    Log.d("CartViewModel", " Resultado de updateUserProducts: $updatedUser")
 
                     if (updatedUser != null) {
                         val cartItems = _cartProducts.value ?: emptyList()
@@ -82,22 +82,22 @@ class CartViewModel(application: Application) : AndroidViewModel(application) {
                         val receiptResult = receiptRepo.saveReceiptToFile(receiptText)
 
                         receiptResult.onSuccess { path ->
-                            Log.d("CartViewModel", "✅ Receipt saved at: $path")
+                            Log.d("CartViewModel", " Receipt saved at: $path")
 
-                            val receiptDir = receiptRepo.getExternalFilesDir() // ✅ Get receipt dir
+                            val receiptDir = receiptRepo.getExternalFilesDir() //  Get receipt dir
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(
                                     getApplication(),
                                     "Receipt saved in: $receiptDir",
                                     Toast.LENGTH_LONG
-                                ).show() // ✅ Show Toast
+                                ).show() //  Show Toast
                             }
                         }.onFailure { e ->
-                            Log.e("CartViewModel", "❌ Failed to save receipt", e)
+                            Log.e("CartViewModel", " Failed to save receipt", e)
                         }
 
                         repo.clearCart()
-                        Log.d("CartViewModel", "🧹 Carrito limpiado correctamente")
+                        Log.d("CartViewModel", " Carrito limpiado correctamente")
 
                         withContext(Dispatchers.Main) {
                             _cartIds.value = emptySet()
@@ -106,13 +106,13 @@ class CartViewModel(application: Application) : AndroidViewModel(application) {
                         }
                         return@launch
                     } else {
-                        Log.e("CartViewModel", "❌ Falló la actualización del usuario")
+                        Log.e("CartViewModel", " Falló la actualización del usuario")
                     }
                 } else {
-                    Log.e("CartViewModel", "❌ No se encontró el usuario")
+                    Log.e("CartViewModel", " No se encontró el usuario")
                 }
             } else {
-                Log.e("CartViewModel", "❌ userEmail es null")
+                Log.e("CartViewModel", " userEmail es null")
             }
 
             withContext(Dispatchers.Main) {
