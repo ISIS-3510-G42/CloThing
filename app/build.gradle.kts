@@ -52,6 +52,7 @@ android {
 
 dependencies {
     implementation(libs.androidx.room.runtime.android)
+    implementation(libs.androidx.webkit)
     val room_version = "2.7.1"
 
     //Retrofit and moshi for API calls and parsing

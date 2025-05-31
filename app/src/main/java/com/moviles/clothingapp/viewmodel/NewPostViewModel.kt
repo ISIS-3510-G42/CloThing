@@ -7,7 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.moviles.clothingapp.model.ImageStoringRepository
 import com.moviles.clothingapp.model.PostData
-import com.moviles.clothingapp.repository.PostRepository
+import com.moviles.clothingapp.model.PostRepository
 import com.moviles.clothingapp.model.LocalPostRepository
 import com.moviles.clothingapp.model.PostEntity
 import kotlinx.coroutines.launch

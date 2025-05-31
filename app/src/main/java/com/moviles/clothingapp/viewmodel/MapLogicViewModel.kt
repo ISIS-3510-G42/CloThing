@@ -24,8 +24,9 @@ class MapLogicViewModel(application: Application) : AndroidViewModel(application
     val userLocation: LiveData<LatLng> get() = _userLocation
 
     /* Camera position (initial and to change) */
-    val cameraPositionState = CameraPositionState()
-
+    val cameraPositionState = CameraPositionState().apply {
+        position = CameraPosition.fromLatLngZoom(LatLng(4.7110, -74.0721), 12f) // Bogotá
+    }
 
     // Shop fetching
     data class Shop(val name: String, val location: LatLng, val address: String)
@@ -49,7 +50,6 @@ class MapLogicViewModel(application: Application) : AndroidViewModel(application
             Shop("Herbario Vintage", LatLng(4.624205328397987, -74.07014419017378), "Cra 15 #35-12, Bogotá")
         )
     }
-
 
     @SuppressLint("MissingPermission")
     fun getUserLocation() {

@@ -1,7 +1,7 @@
-package com.moviles.clothingapp.repository
+package com.moviles.clothingapp.model
 
 import android.util.Log
-import com.moviles.clothingapp.model.PostData
+import com.moviles.clothingapp.cache.CacheManager
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Response
@@ -13,7 +13,9 @@ import retrofit2.http.POST
 
 class PostRepository {
 
-    private val BASE_URL = "http://10.0.2.2:8000/" // this URL of localhost since we run in emulator
+    //private val BASE_URL = "http://10.0.2.2:8000/" // this URL of localhost since we run in emulator
+    private val BASE_URL = "http://34.176.82.66:8000/" // this URL of localhost since we run in emulator
+
 
     private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
     private val retrofit: Retrofit = Retrofit.Builder()
@@ -28,14 +30,22 @@ class PostRepository {
         return try {
             val response = apiService.fetchClothes()
             if (response.isSuccessful) {
-                response.body()
+                val products = response.body()
+                products?.let {
+                    CacheManager.discoverCache.putAll(it)
+                }
+                products
             } else {
                 Log.e("PostRepository", "Response failed: ${response.code()}")
                 null
             }
         } catch (e: Exception) {
             Log.e("PostRepository", "Error: ${e.message}")
-            null
+            if (CacheManager.discoverCache.isNotEmpty()){
+                CacheManager.discoverCache.getAll()
+            } else {
+                null
+            }
         }
     }
 
@@ -102,6 +112,10 @@ class PostRepository {
             Log.e("PostRepository", "Network error: ${e.message}")
             null
         }
+    }
+
+    fun getCachedDiscoverPost(): List<PostData>{
+        return CacheManager.discoverCache.getAll()
     }
 
 

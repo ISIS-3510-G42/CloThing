@@ -21,7 +21,9 @@ import com.moviles.clothingapp.view.Login.CreateAccountScreen
 import com.moviles.clothingapp.view.Login.LoginScreen
 import com.moviles.clothingapp.view.Map.MapScreen
 import com.moviles.clothingapp.viewmodel.FavoritesViewModel
+import com.moviles.clothingapp.viewmodel.CartViewModel
 import com.moviles.clothingapp.view.PostsCreated.PostsCreatedScreen
+import com.moviles.clothingapp.view.Profile.ProfileScreen
 import com.moviles.clothingapp.viewmodel.HomeViewModel
 import com.moviles.clothingapp.viewmodel.LoginViewModel
 import com.moviles.clothingapp.viewmodel.PostViewModel
@@ -32,6 +34,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.moviles.clothingapp.view.favorites.FavoritesScreen
 import androidx.compose.foundation.layout.Box
+import com.moviles.clothingapp.view.favorites.CartScreen
+import com.moviles.clothingapp.viewmodel.ProfileViewModel
 
 
 /* Navigation component called to change between pages
@@ -45,6 +49,7 @@ fun AppNavigation(navController: NavHostController,
                   loginViewModel: LoginViewModel
 ) {
 
+    //Check connection to internet
     if (!isConnected) {
         Box(modifier = Modifier.fillMaxWidth().background(Color.Red)) {
             Text(
@@ -57,6 +62,8 @@ fun AppNavigation(navController: NavHostController,
 
     /* Start navigation in login page. Route: login */
     NavHost(navController = navController, startDestination = "login") {
+
+        //Login view composable
         composable("login") {
             LoginScreen(
                 loginViewModel = loginViewModel,
@@ -69,28 +76,26 @@ fun AppNavigation(navController: NavHostController,
             )
         }
 
-        /* Create account page. Route: createAccount */
+        //Create account view composable
         composable("createAccount") {
             CreateAccountScreen(loginViewModel, navController)
         }
 
-        /* Home/Main page. Route: home */
+        //Home view composable
         composable("home") {
             val homeViewModel: HomeViewModel = viewModel()
             MainScreen(navController, homeViewModel, isConnected)
 
         }
 
-        /* Add more pages here below: */
-
-
-        /* Discover page to show all posts. Route: discover/   */
+        //Discover view composable
         composable("discover/{query}") { backStackEntry ->
             val query = backStackEntry.arguments?.getString("query") ?: ""
             val postViewModel: PostViewModel = viewModel()
             DiscoverScreen(navController, postViewModel, query, isConnected)
         }
 
+        //Detailed post composable... shows the details of a post
         composable(
             route = "detailedPost/{postId}",
             arguments = listOf(navArgument("postId") { type = NavType.IntType })
@@ -102,32 +107,33 @@ fun AppNavigation(navController: NavHostController,
                 productId = postId,
                 viewModel = postViewModel,
                 onBack = { navController.popBackStack() },
-                onAddToCart = { /* lógica para agregar al carrito */ },
                 isConnected = isConnected
-
             )
         }
 
-
+        //Camera view composable
         composable("camera") {
             CameraScreen(navController)
         }
 
-        composable("postCreated") {
-            PostsCreatedScreen(navController = navController)
-        }
-
+        //Create a post view composable
         composable("createPost/{encodedUri}") { backStackEntry ->
             val encodedUri = backStackEntry.arguments?.getString("encodedUri") ?: ""
             val decodedUri = Uri.decode(encodedUri)
             CreatePostScreen(navController, decodedUri)
         }
 
+        //Locally created posts composable
+        composable("postCreated") {
+            PostsCreatedScreen(navController = navController)
+        }
 
+        //Map composable
         composable("map/") {
             MapScreen(navController, isConnected = isConnected)
         }
 
+        //Favorites view composable
         composable("favorites") {
             val favoritesViewModel: FavoritesViewModel = viewModel()
             val postViewModel: PostViewModel = viewModel()
@@ -136,8 +142,22 @@ fun AppNavigation(navController: NavHostController,
             FavoritesScreen(navController,isConnected, favoritesViewModel, allProducts)
         }
 
+        //Cart view composable
+        composable("cart") {
+            val cartViewModel: CartViewModel = viewModel()
+            val postViewModel: PostViewModel = viewModel()
+            val allProducts by postViewModel.posts.collectAsState()
 
+            CartScreen(navController,isConnected, cartViewModel, allProducts)
+        }
 
+        //Profile view composable
+        composable("profile"){
+            val profileViewModel: ProfileViewModel = viewModel()
+            val postViewModel: PostViewModel = viewModel()
+            val allProducts by postViewModel.posts.collectAsState()
+            ProfileScreen(navController, isConnected, profileViewModel, loginViewModel, allProducts)
+        }
 
     }
 }

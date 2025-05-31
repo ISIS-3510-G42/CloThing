@@ -6,6 +6,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.moviles.clothingapp.model.UserData
+import com.moviles.clothingapp.model.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -21,7 +23,10 @@ import kotlinx.coroutines.tasks.await
 *   - If authentication is successful navigates to home screen (HomeView.MainScreen.kt)
 *
  */
-class LoginViewModel(private val auth: FirebaseAuth) : ViewModel() {
+class LoginViewModel(
+    private val auth: FirebaseAuth,
+    private val userRepository: UserRepository
+) : ViewModel() {
     private val _navigateToHome = MutableStateFlow(false)
     val navigateToHome: StateFlow<Boolean> = _navigateToHome
 
@@ -30,7 +35,6 @@ class LoginViewModel(private val auth: FirebaseAuth) : ViewModel() {
 
     private val _signInErrorMessage = MutableStateFlow<String?>(null)
     val signInErrorMessage: StateFlow<String?> = _signInErrorMessage
-
 
     init {
         checkUserLoggedIn()
@@ -54,7 +58,7 @@ class LoginViewModel(private val auth: FirebaseAuth) : ViewModel() {
 
                 auth.signInWithEmailAndPassword(email, password) // Sign in with Firebase
                     .await()
-                val user = auth.currentUser
+
                 _navigateToHome.value = true // Navigate to the home screen
 
 
@@ -80,11 +84,31 @@ class LoginViewModel(private val auth: FirebaseAuth) : ViewModel() {
                     return@launch
                 }
 
+                val authResult = auth.createUserWithEmailAndPassword(email, password).await()
+                val firebaseUser = authResult.user
 
-                auth.createUserWithEmailAndPassword(email, password).await()
-                val user = auth.currentUser
-                _navigateToHome.value = true
 
+                if (firebaseUser != null) {
+                    val userData = UserData(
+                        id = 0,  // or 0 if backend auto-generates it
+                        name = email.substringBefore("@"),
+                        email = email,
+                        postedProducts = "[]",
+                        boughtProducts = "[]"
+                    )
+
+                    val createdUser = userRepository.createUser(userData)
+
+                    if (createdUser == null) {
+                        _signUpErrorMessage.value = "Error al registrar usuario en el backend"
+                        return@launch
+                    }
+
+                    _navigateToHome.value = true
+
+                } else {
+                    _signUpErrorMessage.value = "No se pudo obtener el usuario de Firebase"
+                }
 
             } catch (e: Exception) {
                 val errorMessage = when (e) {
@@ -101,7 +125,10 @@ class LoginViewModel(private val auth: FirebaseAuth) : ViewModel() {
         }
     }
 
-
+    fun signOut() {
+        auth.signOut()
+        _navigateToHome.value = false
+    }
 
     fun setPasswordMismatchError() {
         _signUpErrorMessage.value = "Las contraseñas no coinciden"
